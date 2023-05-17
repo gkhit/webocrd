@@ -1,0 +1,65 @@
+openapi: 3.0.3
+info:
+  title: Web OCR service
+  description: |-
+    Сервис распознования документов
+  contact:
+    email: thinker.gkhit@gmail.com
+  version: 1.0.0
+servers:
+  - url: /api/v1
+
+paths:
+  /ocr:
+    post:
+      summary: Распознать файлы
+      description: Возвращает распознанные данные
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                filename:
+                  type: array
+                  description: Файлы [pdf, jpeg, png, tiff]
+                  items:
+                    type: string
+                    format: binary
+                lang:
+                  type: array
+                  description: Языки
+                  items:
+                    type: string
+                    enum: [rus, eng]
+              required:
+                - filename
+            encoding:
+              filename:
+                contentType: application/pdf, image/jpeg, image/png, image/tiff
+      responses:
+        '200':
+          description: Успех
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: Результат распознования файла
+                  properties:
+                    filename:
+                      type: string
+                      description: Имя файла
+                    data:
+                      type: string
+                      description: Текстовые данные файла
+                    error:
+                      type: string
+                      description: Текст ошибки распознования
+                  required:
+                    - filename
+                    - data
+                    - error
+        '500':
+          description: Внутренняя ошибка сервиса
